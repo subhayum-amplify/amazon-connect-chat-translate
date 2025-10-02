@@ -1,0 +1,2 @@
+export declare const translateFunction: import("@aws-amplify/plugin-types").ConstructFactory<import("@aws-amplify/plugin-types").ResourceProvider<import("@aws-amplify/plugin-types").FunctionResources> & import("@aws-amplify/plugin-types").ResourceAccessAcceptorFactory & import("@aws-amplify/backend-function").AddEnvironmentFactory & import("@aws-amplify/plugin-types").StackProvider>;
+//# sourceMappingURL=resource.d.ts.map

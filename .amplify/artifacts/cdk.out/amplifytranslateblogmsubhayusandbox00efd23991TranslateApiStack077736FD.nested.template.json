@@ -1,0 +1,726 @@
+{
+ "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"AmplifySandbox\",\"createdWith\":\"1.16.1\",\"stackType\":\"custom\",\"metadata\":{}}",
+ "Resources": {
+  "TranslateApi6A097727": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "This service translates text using Amazon Bedrock.",
+    "Name": "Translate Service",
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Resource"
+   }
+  },
+  "TranslateApiCloudWatchRole059B72E8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/CloudWatchRole/Resource"
+   }
+  },
+  "TranslateApiAccount5E16E7BC": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "TranslateApiCloudWatchRole059B72E8",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "TranslateApi6A097727"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Account"
+   }
+  },
+  "TranslateApiDeployment67967694df41597ef0c07dd5702d0eb43a846cee": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "This service translates text using Amazon Bedrock.",
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    }
+   },
+   "DependsOn": [
+    "TranslateApiOPTIONS4F8CBC50",
+    "TranslateApitranslateOPTIONS1CD4F81D",
+    "TranslateApitranslatePOSTF6FE8F5B",
+    "TranslateApitranslate30A644CE"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "TranslateApiDeploymentStagedevF2D1AB40": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "TranslateApiDeployment67967694df41597ef0c07dd5702d0eb43a846cee"
+    },
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    },
+    "StageName": "dev",
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ]
+   },
+   "DependsOn": [
+    "TranslateApiAccount5E16E7BC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/DeploymentStage.dev/Resource"
+   }
+  },
+  "TranslateApiOPTIONS4F8CBC50": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "TranslateApi6A097727",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/OPTIONS/Resource"
+   }
+  },
+  "TranslateApitranslate30A644CE": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "TranslateApi6A097727",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "translate",
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/translate/Resource"
+   }
+  },
+  "TranslateApitranslateOPTIONS1CD4F81D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TranslateApitranslate30A644CE"
+    },
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/translate/OPTIONS/Resource"
+   }
+  },
+  "TranslateApitranslatePOSTApiPermissionamplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApi80AE1380POSTtranslate4447FE21": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Ref": "referencetoamplifytranslateblogmsubhayusandbox00efd23991functionNestedStackfunctionNestedStackResourceDD16AE67Outputsamplifytranslateblogmsubhayusandbox00efd23991functiontranslatelambda483DC2A1Arn"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "TranslateApi6A097727"
+       },
+       "/",
+       {
+        "Ref": "TranslateApiDeploymentStagedevF2D1AB40"
+       },
+       "/POST/translate"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/translate/POST/ApiPermission.amplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApi80AE1380.POST..translate"
+   }
+  },
+  "TranslateApitranslatePOSTApiPermissionTestamplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApi80AE1380POSTtranslate25EE882B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Ref": "referencetoamplifytranslateblogmsubhayusandbox00efd23991functionNestedStackfunctionNestedStackResourceDD16AE67Outputsamplifytranslateblogmsubhayusandbox00efd23991functiontranslatelambda483DC2A1Arn"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "TranslateApi6A097727"
+       },
+       "/test-invoke-stage/POST/translate"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/translate/POST/ApiPermission.Test.amplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApi80AE1380.POST..translate"
+   }
+  },
+  "TranslateApitranslatePOSTF6FE8F5B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "CognitoAuthorizerF3215DBC"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Ref": "referencetoamplifytranslateblogmsubhayusandbox00efd23991functionNestedStackfunctionNestedStackResourceDD16AE67Outputsamplifytranslateblogmsubhayusandbox00efd23991functiontranslatelambda483DC2A1Arn"
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TranslateApitranslate30A644CE"
+    },
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/TranslateApi/Default/translate/POST/Resource"
+   }
+  },
+  "CognitoAuthorizerF3215DBC": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "translate-cognito-authorizer",
+    "ProviderARNs": [
+     {
+      "Ref": "referencetoamplifytranslateblogmsubhayusandbox00efd23991authNestedStackauthNestedStackResourceA62D3B8BOutputsamplifytranslateblogmsubhayusandbox00efd23991authamplifyAuthUserPool426887C9Arn"
+     }
+    ],
+    "RestApiId": {
+     "Ref": "TranslateApi6A097727"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/CognitoAuthorizer/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwW7CQAxEv4X7ZhtyaM8pvZaiIM6V2Zhg2KyjtZeIRvn3Kk1a0ZPfzMiaKWyxfrb5CnrJXH3NPB3tsEVRrPcK7mqgl88BOmpAsYe7HSoULTsym1N4wNI5TkHNG3ae7y0GndwHtVdocPJmqFA4RYevIGjeUc9cT+FCv+lSsjA3gZQPgnHH7KVMeuZIXxh/Bvyp0RC0dqjYz//scTQe2mMNdnMKO4wtiRCH8V/PR9Iu6WgC12gv8nQrcrt+sfnqIkRZTEGpRVvN9xuQpXmoNwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "amplify-translateblog-msubhayu-sandbox-00efd23991/TranslateApiStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "TranslateApiEndpointBF4D5864": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TranslateApi6A097727"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TranslateApiDeploymentStagedevF2D1AB40"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "amplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApiF974B452Ref": {
+   "Value": {
+    "Ref": "TranslateApi6A097727"
+   }
+  },
+  "amplifytranslateblogmsubhayusandbox00efd23991TranslateApiStackTranslateApiDeploymentStagedev39120CCARef": {
+   "Value": {
+    "Ref": "TranslateApiDeploymentStagedevF2D1AB40"
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "referencetoamplifytranslateblogmsubhayusandbox00efd23991functionNestedStackfunctionNestedStackResourceDD16AE67Outputsamplifytranslateblogmsubhayusandbox00efd23991functiontranslatelambda483DC2A1Arn": {
+   "Type": "String"
+  },
+  "referencetoamplifytranslateblogmsubhayusandbox00efd23991authNestedStackauthNestedStackResourceA62D3B8BOutputsamplifytranslateblogmsubhayusandbox00efd23991authamplifyAuthUserPool426887C9Arn": {
+   "Type": "String"
+  }
+ }
+}

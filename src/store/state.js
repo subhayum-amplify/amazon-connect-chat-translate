@@ -5,6 +5,7 @@ const { setGlobalState, useGlobalState } = createGlobalState({
     languageTranslate: [],
     Chats: [],
     currentContactId: 'none',
+    languagePairs: [], // Track locked language pairs: [{contactId, customerLang, agentLang, isLocked}]
     languageOptions: {
         'Afrikaans':'af',
         'Albanian':'sq',
@@ -97,6 +98,33 @@ export const setLanguageTranslate = (state) => {
 
 export const setCurrentContactId = (contactId) => {
     setGlobalState("currentContactId", contactId);
+};
+
+export const setLanguagePairs = (state) => {
+    setGlobalState("languagePairs", state);
+};
+
+export const addLanguagePair = (contactId, customerLang, agentLang) => {
+    setGlobalState("languagePairs", (prevPairs) => {
+        const existingIndex = prevPairs.findIndex(pair => pair.contactId === contactId);
+        const newPair = { contactId, customerLang, agentLang, isLocked: true };
+        
+        if (existingIndex >= 0) {
+            // Update existing pair
+            const updatedPairs = [...prevPairs];
+            updatedPairs[existingIndex] = newPair;
+            return updatedPairs;
+        } else {
+            // Add new pair
+            return [...prevPairs, newPair];
+        }
+    });
+};
+
+export const clearLanguagePair = (contactId) => {
+    setGlobalState("languagePairs", (prevPairs) => {
+        return prevPairs.filter(pair => pair.contactId !== contactId);
+    });
 };
 
 export { useGlobalState };
