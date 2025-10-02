@@ -3,8 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@aws-amplify/backend": "^1.0.0",
-		"@aws-amplify/backend-cli": "^1.0.0",
+		"@aws-amplify/backend": "^1.16.1",
+		"@aws-amplify/backend-cli": "^1.8.0",
 		"@aws-amplify/ui-react": "^6.1.6",
 		"@babel/core": "7.24.3",
 		"@babel/plugin-syntax-flow": "^7.24.1",

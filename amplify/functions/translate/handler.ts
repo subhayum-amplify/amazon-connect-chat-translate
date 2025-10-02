@@ -10,7 +10,7 @@ Format: {"detectedLanguage": "name", "detectedLanguageCode": "code", "translated
 Assistant:`;
 
   const modelId = 'anthropic.claude-3-haiku-20240307-v1:0';
-  
+
   const command = new InvokeModelCommand({
     modelId,
     body: JSON.stringify({
@@ -24,7 +24,7 @@ Assistant:`;
 
   const response = await bedrockClient.send(command);
   const responseBody = JSON.parse(new TextDecoder().decode(response.body));
-  
+
   try {
     const content = responseBody.content[0].text;
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -75,7 +75,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.log('Processing:', { content, targetLang, operation });
 
     const result = await detectLanguageAndTranslate(content, targetLang);
-    
+
     console.log('Bedrock result:', result);
 
     return {
