@@ -39,7 +39,7 @@
 	},
 	"scripts": {
 		"start": "craco start",
-		"build": "craco build",
+		"build": "npm ci --prefer-offline --no-audit --cache .npm && craco build",
 		"amplify:dev": "npx ampx sandbox --outputs-out-dir src",
 		"amplify:build": "npx ampx generate outputs --app-id $AWS_APP_ID --branch-name $AWS_BRANCH --outputs-out-dir src"
 	},
@@ -61,7 +61,7 @@
 		]
 	},
 	"devDependencies": {
-		"@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+		"@babel/plugin-transform-private-property-in-object": "^7.24.7",
 		"@craco/craco": "^7.1.0",
 		"@semantic-ui-react/craco-less": "^3.0.0",
 		"@types/node": "*",
@@ -80,7 +80,9 @@
 		"typescript": "^5.4.3",
 		"@aws-amplify/core": "6.5.3",
 		"@aws-amplify/storage": "6.6.16",
-		"@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+		"@babel/plugin-proposal-private-property-in-object": "npm:@babel/plugin-transform-private-property-in-object@^7.24.7",
+		"glob": "^10.4.5",
+		"rimraf": "^5.0.10"
 	},
 	"overrides": {
 		"nth-check": "^2.1.1",
@@ -93,7 +95,11 @@
 		"react-dom": "^18.2.0",
 		"react-use": "^17.2.1",
 		"@aws-amplify/storage": "6.0.23",
-		"typescript": "^5.4.3"
+		"typescript": "^5.4.3",
+		"glob": "^10.4.5",
+		"rimraf": "^5.0.10",
+		"eslint": "^8.57.1",
+		"@babel/plugin-proposal-private-property-in-object": "npm:@babel/plugin-transform-private-property-in-object@^7.24.7"
 	},
 	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
