@@ -5,6 +5,7 @@
 	"dependencies": {
 		"@aws-amplify/backend": "^1.16.1",
 		"@aws-amplify/backend-cli": "^1.8.0",
+		"@aws-amplify/data-schema-types": "^1.0.0",
 		"@aws-amplify/ui-react": "^6.1.6",
 		"@babel/core": "7.24.3",
 		"@babel/plugin-syntax-flow": "^7.24.1",
@@ -33,6 +34,7 @@
 		"react-scripts": "^5.0.1",
 		"semantic-ui-less": "^2.5.0",
 		"semantic-ui-react": "^2.1.5",
+		"tsx": "^4.19.1",
 		"typescript": "^5.4.3",
 		"web-vitals": "^3.5.2",
 		"webpack": "^5.91.0"
@@ -65,7 +67,10 @@
 		"@craco/craco": "^7.1.0",
 		"@semantic-ui-react/craco-less": "^3.0.0",
 		"@types/node": "*",
-		"semantic-ui-less": "^2.5.0"
+		"@csstools/normalize.css": "^12.1.1",
+		"eslint-config-react-app": "^7.0.1",
+		"semantic-ui-less": "^2.5.0",
+		"tsx": "^4.19.1"
 	},
 	"resolutions": {
 		"@svgr/webpack": "^8.1.0",
@@ -78,8 +83,8 @@
 		"craco-less": "^3.0.1",
 		"json5": "^2.2.3",
 		"typescript": "^5.4.3",
-		"@aws-amplify/core": "6.5.3",
-		"@aws-amplify/storage": "6.6.16",
+		"@aws-amplify/core": "^6.6.2",
+		"@aws-amplify/storage": "^6.6.16",
 		"@babel/plugin-proposal-private-property-in-object": "npm:@babel/plugin-transform-private-property-in-object@^7.24.7",
 		"glob": "^10.4.5",
 		"rimraf": "^5.0.10"
@@ -94,11 +99,15 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-use": "^17.2.1",
-		"@aws-amplify/storage": "6.0.23",
+		"@aws-amplify/storage": "^6.6.16",
+		"@aws-amplify/core": "^6.6.2",
+		"@aws-amplify/data-schema-types": "^1.0.0",
+		"@csstools/normalize.css": "^12.1.1",
 		"typescript": "^5.4.3",
 		"glob": "^10.4.5",
 		"rimraf": "^5.0.10",
 		"eslint": "^8.57.1",
+		"eslint-config-react-app": "^7.0.1",
 		"@babel/plugin-proposal-private-property-in-object": "npm:@babel/plugin-transform-private-property-in-object@^7.24.7"
 	},
 	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
