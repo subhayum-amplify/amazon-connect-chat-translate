@@ -41,8 +41,9 @@ Assistant:`;
       originalText: text
     };
   }
-}export
- const handler: APIGatewayProxyHandler = async (event) => {
+}
+
+export const handler: APIGatewayProxyHandler = async (event) => {
   console.log('Bedrock Translation Handler - Event:', event);
 
   const corsHeaders = {
