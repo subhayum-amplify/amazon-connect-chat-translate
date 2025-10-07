@@ -18,7 +18,7 @@ Text: "${text}"
 If the text contains natural language content, detect its language and translate only that content to ${targetLanguage}. If the text is purely technical with no natural language content, return the original text untranslated.
 
 Provide response in this exact JSON format:
-{"detectedLanguage": "language name", "detectedLanguageCode": "ISO code", "translatedText": "translation of natural language parts only", "originalText": "original text"}
+{"detectedLanguage": "language name", "detectedLanguageCode": "ISO code", "translatedText": "translation of natural language parts only", "originalText": "original text"}`;
 
   const modelId = 'anthropic.claude-3-haiku-20240307-v1:0';
 
@@ -39,22 +39,35 @@ Provide response in this exact JSON format:
   try {
     const content = responseBody.content[0].text;
     console.log('Raw Bedrock response:', content);
-    
+
     // Try to extract JSON from the response
     const jsonMatch = content.match(/\{[\s\S]*?\}/);
     if (jsonMatch) {
       const parsedResult = JSON.parse(jsonMatch[0]);
       console.log('Parsed result:', parsedResult);
+
+      // Validate the result and default to English if detection failed
+      if (!parsedResult.detectedLanguage || parsedResult.detectedLanguage === 'Unknown' || !parsedResult.detectedLanguageCode) {
+        console.log('Language detection failed, defaulting to English');
+        return {
+          detectedLanguage: 'English',
+          detectedLanguageCode: 'en',
+          translatedText: text,
+          originalText: text
+        };
+      }
+
       return parsedResult;
     }
     throw new Error('No JSON found in response');
   } catch (error) {
     console.error('Error parsing Bedrock response:', error);
     console.error('Response content:', responseBody.content[0]?.text);
+    // Default to English when language detection fails
     return {
-      detectedLanguage: 'Unknown',
-      detectedLanguageCode: 'unknown',
-      translatedText: text,
+      detectedLanguage: 'English',
+      detectedLanguageCode: 'en',
+      translatedText: text, // Keep original text as-is since we assume it's already English
       originalText: text
     };
   }
