@@ -21,7 +21,7 @@ frontend:
         - echo "Starting build process..."
         - REACT_APP_CONNECT_REGION=${REACT_APP_CONNECT_REGION}
         - REACT_APP_CONNECT_INSTANCE_ID=${REACT_APP_CONNECT_INSTANCE_ID}
-        - craco build
+        - npm run build
         - echo "Build completed successfully"
   artifacts:
     baseDirectory: build
