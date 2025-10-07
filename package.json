@@ -42,7 +42,7 @@
 	},
 	"scripts": {
 		"start": "craco start",
-		"build": "npm ci --prefer-offline --legacy-peer-deps --no-audit --cache .npm && craco build",
+		"build": "npm install && craco build",
 		"amplify:dev": "npx ampx sandbox --outputs-out-dir src",
 		"amplify:build": "npx ampx generate outputs --app-id $AWS_APP_ID --branch-name $AWS_BRANCH --outputs-out-dir src"
 	},
