@@ -4,10 +4,21 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 const bedrockClient = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
 
 async function detectLanguageAndTranslate(text: string, targetLanguage: string = 'English') {
-  const prompt = `Human: Analyze this text and provide JSON response:
+  const prompt = `Human: Analyze this text and detect the language of ONLY the natural human language content. Ignore and do not translate any technical content such as:
+- Code snippets (SQL, JavaScript, Python, etc.)
+- Error messages and stack traces
+- Log outputs and system messages
+- URLs, file paths, and technical identifiers
+- Configuration files and markup
+
+Focus ONLY on natural language text that appears to be human communication (sentences, phrases, conversational text).
+
 Text: "${text}"
-Format: {"detectedLanguage": "name", "detectedLanguageCode": "code", "translatedText": "translation to ${targetLanguage}", "originalText": "original"}
-Assistant:`;
+
+If the text contains natural language content, detect its language and translate only that content to ${targetLanguage}. If the text is purely technical with no natural language content, return the original text untranslated.
+
+Provide response in this exact JSON format:
+{"detectedLanguage": "language name", "detectedLanguageCode": "ISO code", "translatedText": "translation of natural language parts only", "originalText": "original text"}
 
   const modelId = 'anthropic.claude-3-haiku-20240307-v1:0';
 
@@ -27,13 +38,19 @@ Assistant:`;
 
   try {
     const content = responseBody.content[0].text;
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    console.log('Raw Bedrock response:', content);
+    
+    // Try to extract JSON from the response
+    const jsonMatch = content.match(/\{[\s\S]*?\}/);
     if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+      const parsedResult = JSON.parse(jsonMatch[0]);
+      console.log('Parsed result:', parsedResult);
+      return parsedResult;
     }
     throw new Error('No JSON found in response');
   } catch (error) {
     console.error('Error parsing Bedrock response:', error);
+    console.error('Response content:', responseBody.content[0]?.text);
     return {
       detectedLanguage: 'Unknown',
       detectedLanguageCode: 'unknown',
