@@ -8,6 +8,7 @@
   "dependencies": {
     "@aws-amplify/backend": "^1.0.0",
     "@aws-amplify/backend-cli": "^1.0.0",
+    "@types/aws-lambda": "^8.10.153",
     "aws-cdk-lib": "^2.100.0",
     "constructs": "^10.0.0",
     "tsx": "^4.19.1",
