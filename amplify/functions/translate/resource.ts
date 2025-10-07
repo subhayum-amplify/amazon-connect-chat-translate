@@ -7,5 +7,8 @@ export const translateFunction = defineFunction({
   timeout: 30,
   environment: {
     // Add any environment variables if needed
+  },
+  bundling: {
+    externalModules: ['@aws-sdk/client-bedrock-runtime']
   }
 });
