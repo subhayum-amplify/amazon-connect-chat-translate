@@ -1,9 +1,9 @@
 {
   "auth": {
-    "user_pool_id": "us-east-1_iyQ7CKmMs",
+    "user_pool_id": "us-east-1_s1IWk6MVj",
     "aws_region": "us-east-1",
-    "user_pool_client_id": "58b048b3i9abmsllpkcbe8mpd3",
-    "identity_pool_id": "us-east-1:5e413d34-0a03-4e0e-8d6a-f04aaf378a34",
+    "user_pool_client_id": "3a4pibabskg5kpdgb4ip76oofl",
+    "identity_pool_id": "us-east-1:f37a3255-ca70-480a-bc61-4aaff3d92f4f",
     "mfa_methods": [],
     "standard_required_attributes": [
       "email"
@@ -27,7 +27,7 @@
   },
   "version": "1.4",
   "custom": {
-    "translateApiEndpoint": "https://ct5fsv8l2e.execute-api.us-east-1.amazonaws.com/dev/",
+    "translateApiEndpoint": "https://s4hp9i966c.execute-api.us-east-1.amazonaws.com/dev/",
     "translateApiName": "translateApi"
   }
 }

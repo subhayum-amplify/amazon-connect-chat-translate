@@ -4,21 +4,22 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 const bedrockClient = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
 
 async function detectLanguageAndTranslate(text: string, targetLanguage: string = 'English') {
-  const prompt = `Human: Analyze this text and detect the language of ONLY the natural human language content. Ignore and do not translate any technical content such as:
-- Code snippets (SQL, JavaScript, Python, etc.)
-- Error messages and stack traces
-- Log outputs and system messages
-- URLs, file paths, and technical identifiers
-- Configuration files and markup
+  const prompt = `Human: You are a language detection and translation expert. Translate the following NATURAL LANGUAGE text from its detected language to ${targetLanguage}.
 
-Focus ONLY on natural language text that appears to be human communication (sentences, phrases, conversational text).
+IMPORTANT: This text should contain ONLY natural human language content. No code, URLs, or technical elements should be present.
 
-Text: "${text}"
+Text to translate: "${text}"
+Target language: ${targetLanguage}
 
-If the text contains natural language content, detect its language and translate only that content to ${targetLanguage}. If the text is purely technical with no natural language content, return the original text untranslated.
+If you cannot detect the language confidently, default to English.
 
-Provide response in this exact JSON format:
-{"detectedLanguage": "language name", "detectedLanguageCode": "ISO code", "translatedText": "translation of natural language parts only", "originalText": "original text"}`;
+Respond with valid JSON:
+{
+  "detectedLanguage": "detected language name (e.g., Spanish, French, German)",
+  "detectedLanguageCode": "ISO language code (e.g., es, fr, de, en)",
+  "translatedText": "translated text in target language",
+  "originalText": "${text}"
+}`
 
   const modelId = 'anthropic.claude-3-haiku-20240307-v1:0';
 
@@ -46,9 +47,11 @@ Provide response in this exact JSON format:
       const parsedResult = JSON.parse(jsonMatch[0]);
       console.log('Parsed result:', parsedResult);
 
-      // Validate the result and default to English if detection failed
-      if (!parsedResult.detectedLanguage || parsedResult.detectedLanguage === 'Unknown' || !parsedResult.detectedLanguageCode) {
-        console.log('Language detection failed, defaulting to English');
+      // Handle unknown language - default to English
+      if (!parsedResult.detectedLanguage ||
+        parsedResult.detectedLanguage === 'Unknown' ||
+        !parsedResult.detectedLanguageCode) {
+        console.log('Language detection failed or unknown, defaulting to English');
         return {
           detectedLanguage: 'English',
           detectedLanguageCode: 'en',
@@ -57,17 +60,35 @@ Provide response in this exact JSON format:
         };
       }
 
-      return parsedResult;
+      // Validate that we have proper translation result
+      if (!parsedResult.translatedText) {
+        parsedResult.translatedText = text;
+      }
+
+      console.log('Translation completed:', {
+        language: parsedResult.detectedLanguage,
+        originalLength: text.length,
+        translatedLength: parsedResult.translatedText.length
+      });
+
+      return {
+        detectedLanguage: parsedResult.detectedLanguage,
+        detectedLanguageCode: parsedResult.detectedLanguageCode,
+        translatedText: parsedResult.translatedText,
+        originalText: parsedResult.originalText || text
+      };
     }
     throw new Error('No JSON found in response');
   } catch (error) {
     console.error('Error parsing Bedrock response:', error);
     console.error('Response content:', responseBody.content[0]?.text);
-    // Default to English when language detection fails
+
+    // Default to English for natural language content
+    console.log('Fallback: Defaulting to English');
     return {
       detectedLanguage: 'English',
       detectedLanguageCode: 'en',
-      translatedText: text, // Keep original text as-is since we assume it's already English
+      translatedText: text,
       originalText: text
     };
   }

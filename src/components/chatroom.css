@@ -51,7 +51,7 @@ p {
 .chatroom .chats .chat {
   background: #EDEDED;
   position: relative;
-  padding: 5px 13px;
+  padding: 8px 13px;
   font-size: 14px;
   border-radius: 10px;
   list-style: none;
@@ -59,7 +59,9 @@ p {
   clear: both;
   margin: 10px 0;
   width: 250px;
+  min-height: 20px;
   overflow-wrap: break-word;
+  display: block;
 }
 
 
@@ -77,6 +79,9 @@ p {
   float: right;
   clear: both;
   background: #E8F6F8;
+  display: block;
+  width: 250px;
+  min-height: 20px;
 }
 
 .chatroom .chats .chat a {
@@ -84,9 +89,92 @@ p {
   color:#3498DB;
 }
 
+/* Mixed content styling - plain text only */
+.mixed-content {
+  display: block;
+  width: 100%;
+}
+
+/* Content section styling */
+.original-content {
+  margin-bottom: 8px;
+  width: 100%;
+  display: block;
+}
+
+.content-label {
+  font-size: 11px;
+  color: #666;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Ensure right-side messages have proper content styling */
+.chat.right .original-content,
+.chat.right .translated-section {
+  width: 100%;
+  display: block;
+}
+
+/* Translation section styling */
+.translated-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+}
+
+.translated-label {
+  font-size: 11px;
+  color: #666;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
 .translatedMessage {
-  text-decoration: none;
-  color: red;
+  color: #d32f2f;
+  font-style: italic;
+}
+
+/* No special styling for technical content in translations */
+
+/* Message content containers */
+.message-content {
+  margin-bottom: 4px;
+  width: 100%;
+  display: block;
+}
+
+.simple-content {
+  line-height: 1.4;
+  display: block;
+  width: 100%;
+}
+
+/* Ensure both left and right messages have consistent styling */
+.chat.left .message-content,
+.chat.right .message-content {
+  width: 100%;
+  display: block;
+}
+
+.chat.left .mixed-content,
+.chat.right .mixed-content {
+  width: 100%;
+  display: block;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 400px) {
+  .chatroom {
+    width: 100%;
+    max-width: 335px;
+  }
+}
+
+/* Simple spacing for mixed content */
+.mixed-content span {
+  display: inline;
 }
 
 .chatroom .input {

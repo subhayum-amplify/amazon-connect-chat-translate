@@ -15,13 +15,8 @@ amplify/#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
 amplify/mock-api-resources
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/awscloudformation
-amplify/#current-cloud-backend
-amplify/.config/local-*
-amplify/logs
-amplify/mock-api-resources
+amplify_outputs.json
+**/amplify_outputs.json
 
 # Build outputs
 build/

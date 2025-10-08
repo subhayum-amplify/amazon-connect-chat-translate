@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid } from 'semantic-ui-react';
 //import awsconfig from '../aws-exports';
 import Chatroom from './chatroom';
-import translateText from './translate'
+import ProcessChatText from './translate'
 import { addChat, setLanguageTranslate, clearChat, useGlobalState, setCurrentContactId, addLanguagePair, clearLanguagePair } from '../store/state';
 
 // Note: Amplify.configure() is called in App.js
@@ -42,6 +42,73 @@ const Ccp = () => {
     }
     // Track processed messages to prevent duplicates
     const processedMessages = new Set();
+
+    // Helper function to create chat data with proper content rendering
+    const createChatData = (contactId, username, originalText, translatedText, detectedLanguage, languageCode, translationResult = null) => {
+        const segments = translationResult?.segments || [];
+        const hasMixedContent = translationResult?.hasMixedContent || false;
+        
+        console.log('Creating customer chat data:', {
+            username,
+            originalText: originalText?.substring(0, 100),
+            translatedText: translatedText?.substring(0, 100),
+            hasMixedContent,
+            segmentCount: segments.length,
+            segments: segments.map(s => ({ 
+                type: s.type, 
+                contentPreview: s.content?.substring(0, 50),
+                hasTranslatedContent: !!s.translatedContent 
+            }))
+        });
+        
+        // If we don't have proper segments but the text looks like it should be technical, create segments manually
+        if (segments.length === 0 && originalText) {
+            const technicalPatterns = [
+                /\b(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|WITH)\b/i,
+                /\b(function|const|let|var|class|import|export)\b/i,
+                /(Error:|Exception:|TypeError:|ReferenceError:)/i,
+                /https?:\/\/[^\s]+/i
+            ];
+            
+            const isPureTechnical = technicalPatterns.some(pattern => pattern.test(originalText));
+            
+            if (isPureTechnical) {
+                console.log('Creating manual technical segment for customer:', originalText.substring(0, 50));
+                const manualSegments = [{
+                    type: 'technical',
+                    content: originalText,
+                    translatedContent: translatedText || originalText,
+                    originalIndex: 0
+                }];
+                
+                return {
+                    contactId,
+                    username,
+                    content: null,
+                    translatedMessage: null,
+                    detectedLanguage,
+                    languageCode,
+                    segments: manualSegments,
+                    hasMixedContent: true,
+                    originalText: originalText,
+                    translatedText: translatedText
+                };
+            }
+        }
+        
+        return {
+            contactId,
+            username,
+            content: hasMixedContent && segments.length > 0 ? null : <p>{originalText}</p>,
+            translatedMessage: hasMixedContent && segments.length > 0 ? null : <p>{translatedText}</p>,
+            detectedLanguage,
+            languageCode,
+            segments: segments,
+            hasMixedContent: hasMixedContent,
+            originalText: originalText,
+            translatedText: translatedText
+        };
+    };
 
     // *******
     // Processing the incoming chat from the Customer
@@ -115,20 +182,21 @@ const Ccp = () => {
             console.log(`CDEBUG ===> Assuming customer message is in locked language: ${sourceLanguageName}`);
 
             // Directly translate using the locked customer language - NO language detection
-            const translationResult = await translateText(content, sourceLanguageName, 'English');
+            const translationResult = await ProcessChatText(content, sourceLanguageName, 'English');
             const translatedMessage = translationResult.translatedText || content;
 
             console.log(`CDEBUG ===> Locked translation result:`, translationResult);
 
             // create the new message to add to Chats.
-            let data2 = {
-                contactId: contactId,
-                username: 'customer',
-                content: <p>{content}</p>,
-                translatedMessage: <p>{translatedMessage}</p>,
-                detectedLanguage: sourceLanguageName,
-                languageCode: existingPair.customerLang
-            };
+            let data2 = createChatData(
+                contactId,
+                'customer',
+                content,
+                translatedMessage,
+                sourceLanguageName,
+                existingPair.customerLang,
+                translationResult
+            );
             addChat(prevMsg => [...prevMsg, data2]);
             return;
         }
@@ -144,7 +212,7 @@ const Ccp = () => {
             // This is the FIRST customer message - detect and lock the language
             console.log(`CDEBUG ===> FIRST customer message - detecting and locking language: ${content}`);
 
-            let translationResult = await translateText(content, 'auto', 'English');
+            let translationResult = await ProcessChatText(content, 'auto', 'English');
             console.log(`CDEBUG ===> First message translation result:`, translationResult);
 
             const translatedMessage = translationResult.translatedText || content;
@@ -162,14 +230,15 @@ const Ccp = () => {
             setLanguageTranslate(languageTranslate);
 
             // Create the message
-            let data2 = {
-                contactId: contactId,
-                username: 'customer',
-                content: <p>{content}</p>,
-                translatedMessage: <p>{translatedMessage}</p>,
-                detectedLanguage: detectedLang,
-                languageCode: detectedLangCode
-            };
+            let data2 = createChatData(
+                contactId,
+                'customer',
+                content,
+                translatedMessage,
+                detectedLang,
+                detectedLangCode,
+                translationResult
+            );
             addChat(prevMsg => [...prevMsg, data2]);
 
         } else if (existingLanguage) {
@@ -217,7 +286,7 @@ const Ccp = () => {
             console.log(`CDEBUG ===> Language LOCKED to: ${lockedLangCode}. Validating message: ${content}`);
 
             // First detect the language of this message to validate it
-            let detectionResult = await translateText(content, 'auto', 'English');
+            let detectionResult = await ProcessChatText(content, 'auto', 'English');
             const currentMsgLangCode = detectionResult.detectedLanguageCode || 'en';
 
             console.log(`CDEBUG ===> Current message language: ${currentMsgLangCode}, Locked language: ${lockedLangCode}`);
@@ -226,46 +295,47 @@ const Ccp = () => {
                 // Different language detected - show warning
                 console.log(`CDEBUG ===> ⚠️ DIFFERENT LANGUAGE DETECTED! Message: ${currentMsgLangCode}, Expected: ${lockedLangCode}`);
 
-                let data2 = {
-                    contactId: contactId,
-                    username: 'customer',
-                    content: <p>{content}</p>,
-                    translatedMessage: <p style={{ color: 'red', fontStyle: 'italic' }}>⚠️ Different language detected. Please use {getLanguageName(lockedLangCode)} only.</p>,
-                    detectedLanguage: getLanguageName(currentMsgLangCode),
-                    languageCode: currentMsgLangCode
-                };
+                let data2 = createChatData(
+                    contactId,
+                    'customer',
+                    content,
+                    `⚠️ Different language detected. Please use ${getLanguageName(lockedLangCode)} only.`,
+                    getLanguageName(currentMsgLangCode),
+                    currentMsgLangCode
+                );
                 addChat(prevMsg => [...prevMsg, data2]);
             } else {
                 // Same language - translate normally using locked language
                 console.log(`CDEBUG ===> ✅ Language matches locked language. Translating from ${getLanguageName(lockedLangCode)} to English`);
 
                 const sourceLanguageName = getLanguageName(lockedLangCode);
-                let translationResult = await translateText(content, sourceLanguageName, 'English');
+                let translationResult = await ProcessChatText(content, sourceLanguageName, 'English');
                 const translatedMessage = translationResult.translatedText || content;
 
                 console.log(`CDEBUG ===> Translation result:`, translationResult);
 
-                let data2 = {
-                    contactId: contactId,
-                    username: 'customer',
-                    content: <p>{content}</p>,
-                    translatedMessage: <p>{translatedMessage}</p>,
-                    detectedLanguage: sourceLanguageName,
-                    languageCode: lockedLangCode
-                };
+                let data2 = createChatData(
+                    contactId,
+                    'customer',
+                    content,
+                    translatedMessage,
+                    sourceLanguageName,
+                    lockedLangCode,
+                    translationResult
+                );
                 addChat(prevMsg => [...prevMsg, data2]);
             }
         } else {
             // Fallback case - shouldn't happen but handle gracefully
             console.log(`CDEBUG ===> Fallback case - no existing language found`);
-            let data2 = {
-                contactId: contactId,
-                username: 'customer',
-                content: <p>{content}</p>,
-                translatedMessage: <p>{content}</p>,
-                detectedLanguage: 'Unknown',
-                languageCode: 'unknown'
-            };
+            let data2 = createChatData(
+                contactId,
+                'customer',
+                content,
+                content,
+                'Unknown',
+                'unknown'
+            );
             addChat(prevMsg => [...prevMsg, data2]);
         }
     }
